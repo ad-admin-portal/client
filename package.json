@@ -1,0 +1,69 @@
+{
+    "name": "ad-admin-portal",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "nuxt",
+        "build": "nuxt build",
+        "start": "nuxt start",
+        "generate": "nuxt generate",
+        "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
+        "lint": "npm run lint:js",
+        "test": "jest"
+    },
+    "lint-staged": {
+        "*.{js,vue}": "eslint"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "dependencies": {
+        "@coreui/coreui-pro": "^3.4.0",
+        "@coreui/icons": "^2.0.0-rc.0",
+        "@coreui/utils": "^1.3.1",
+        "@coreui/vue-chartjs": "^1.0.6",
+        "@coreui/vue-pro": "^3.2.8",
+        "@fortawesome/free-regular-svg-icons": "^5.15.2",
+        "@nuxtjs/axios": "^5.12.2",
+        "@nuxtjs/style-resources": "^1.0.0",
+        "core-js": "^3.6.5",
+        "liquor-tree": "^0.2.70",
+        "nuxt": "^2.14.6",
+        "primeicons": "^4.1.0",
+        "primevue": "^2.3.0",
+        "vue-simple-calendar": "^5.0.0",
+        "vue-tree-list": "^1.5.0",
+        "vuelidate": "^0.7.6",
+        "vuex-persistedstate": "^4.0.0-beta.3"
+    },
+    "devDependencies": {
+        "@fortawesome/free-brands-svg-icons": "^5.15.2",
+        "@fortawesome/free-solid-svg-icons": "^5.15.2",
+        "@nuxtjs/eslint-config": "^3.1.0",
+        "@nuxtjs/eslint-module": "^2.0.0",
+        "@nuxtjs/fontawesome": "^1.1.2",
+        "@vue/test-utils": "^1.1.0",
+        "babel-core": "7.0.0-bridge.0",
+        "babel-eslint": "^10.1.0",
+        "babel-jest": "^26.5.0",
+        "eslint": "^7.10.0",
+        "eslint-config-prettier": "^6.12.0",
+        "eslint-plugin-nuxt": "^1.0.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "husky": "^4.3.0",
+        "jest": "^26.5.0",
+        "lint-staged": "^10.4.0",
+        "node-sass": "^5.0.0",
+        "prettier": "^2.1.2",
+        "sass-loader": "^10.1.0",
+        "vue-jest": "^3.0.4"
+    },
+    "config": {
+        "nuxt": {
+            "host": "0.0.0.0",
+            "port": "3001"
+        }
+    }
+}
