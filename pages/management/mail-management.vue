@@ -9,36 +9,42 @@
                     >
                     등록
                 </CButton>
+                <!-- <router-link 
+                class="float-right btn btn-info"
+                color="info"
+                to="/management/mailDetail">등록</router-link> -->
             </CCardHeader>
             <CCardBody>
-                <CDataTable
-                    :items="mails"
-                    :fields="fields"
-                    items-per-page-select
-                    :items-per-page="10"
-                    hover
-                    sorter
-                    pagination
-                    table-filter
-                    cleaner
-                >
-                    <template #btn="{item}">
-                        <td>
-                            <CButton
-                                color="success"
-                                @click.stop="openUpdateModal(item)"
+                <!-- <router-view> -->
+                    <CDataTable
+                        :items="mailsData"
+                        :fields="fields"
+                        items-per-page-select
+                        :items-per-page="10"
+                        hover
+                        sorter
+                        pagination
+                        table-filter
+                        cleaner
+                    >
+                        <template #btn="{item}">
+                            <td>
+                                <CButton
+                                    color="success"
+                                    @click.stop="openUpdateModal(item)"
+                                    >
+                                수정
+                                </CButton>
+                                <CButton
+                                    color="danger"
+                                    @click.stop="openDeleteConfirm(item)"
                                 >
-                              수정
-                              </CButton>
-                              <CButton
-                                color="danger"
-                                @update:checked="handleSwitchUpdate(item)"
-                            >
-                              삭제
-                              </CButton>
-                        </td>
-                    </template>
-                </CDataTable>
+                                삭제
+                                </CButton>
+                            </td>
+                        </template>
+                    </CDataTable>
+                <!-- </router-view> -->
             </CCardBody>
         </CCard>
 
@@ -51,19 +57,23 @@
                     updateModal.modal = false;
                 }
             "
-            @confirm="insertMailInfo"
-            />
+            @confirm="openUpdateConfirm"
+        />
         <MailModal
-        :modal-title="insertModal.modalTitle"
-        :show-modal="insertModal.modal"
-        @close="
-        () => {
-            insertModal.modal = false;
-        }
-        "
-        @confirm="insertMailInfo"
-            />
-
+            :modal-title="insertModal.modalTitle"
+            :show-modal="insertModal.modal"
+            @close="
+            () => {
+                insertModal.modal = false;
+            }
+            "
+            @confirm="openInsertConfirm"
+        />
+        <Confirm ref="confirmComponent"
+            @delete="disableMailInfo"
+            @update="updateMailInfo"
+            @insert="insertMailInfo"
+        />
     </div>
 </template>
 
@@ -76,10 +86,10 @@ export default {
             mails: [],
             fields: [
                 { key: "type", label: "종류" },
-                { key: "smsContent", label: "SMS 포맷"},
-                { key: "mailContent", label: "EMAIL 포맷" },
                 { key: "sendTime", label: "발송 시간" },
                 { key: "sendDueDate", label: "만료 며칠전인지" },
+                { key: "sendType", label: "발송 유형" },
+                { key: "sendUser", label: "발송 대상" },
                 { key: "btn", label:""}
             ],
             updateModal: {
@@ -92,30 +102,95 @@ export default {
                 modalTitle:"SMS/EMAIL 폼 등록"
             },
             collapseDuration: 300,
+            targetMail:{},
             warningModal:false
         };
     },
     computed: {
+        mailsData(){
+            return this.mails.map((item,index)=>{
 
+            //    switch(item.sendType){
+            //        case 0:
+            //            item.sendType = "둘 다";
+            //            break;
+            //         case 1:
+            //             item.sendType="EMAIL"
+            //             break;
+            //         case 2:
+            //             item.sendType="SMS/EMAIL"
+            //             break;
+            //    }
+
+               return {...item,index};
+            });
+
+        }
     },
-     created() {
-        this.$axios.get("/api/management/mail").then((response) => {
+    created() {
+        this.$axios.get("/api/management/enabledMail").then((response) => {
             if (response.status === 200) {
-                this.mails = response.data
+                this.mails = response.data;
             }
         });
     },
     methods: {
         openUpdateModal(item){
+            this.targetMail = item;
             this.updateModal.rowData = item;
             this.updateModal.modal = true;
         },
-        insertMailInfo(formData){
-            console.log(formData);
-            this.$axios.post("/api/management/mail",formData)
+        insertMailInfo(){
+            this.$axios.post("/api/management/mail",this.targetMail)
             .then((response)=>{
-                console.log(response);
+                 if (response.status === 201) {
+                     this.$vToastify.success("성공");
+                     this.insertModal.modal = false;
+                     this.mails.unshift(response.data);
+                     this.reset();
+                }else{
+                     this.$vToastify.error("실패");
+                }
             })
+        },
+        updateMailInfo(){
+            this.$axios.put("/api/management/mail/"+this.targetMail.id,this.targetMail)
+            .then((response)=>{
+                if (response.status === 200) {
+                    this.$vToastify.success("성공");
+                    this.updateModal.modal = false;
+                    const index = this.mails.findIndex((_mail) => _mail.id === this.targetMail.id);
+                        if (index >= 0) {
+                            this.mails.splice(index, 1, this.targetMail);
+                        }
+                }else{
+                    this.$vToastify.error("실패");
+                }
+            })
+        },
+        disableMailInfo(){
+            this.$axios.delete("/api/management/mail/"+this.targetMail.id)
+            .then((response)=>{
+                if (response.status === 200) {
+                    this.$vToastify.success("성공");
+                    const index = this.mails.findIndex((_mail) => _mail.id === this.targetMail.id);
+                    this.mails.splice(index, 1);
+                }else{
+
+                }
+            })
+        },
+        openDeleteConfirm(item){
+            this.targetMail = item;
+            return this.$refs.confirmComponent.customConfirm('삭제하시겠습니까?','delete');
+        },
+        openUpdateConfirm(item){
+            this.targetMail = item;
+            return this.$refs.confirmComponent.updateConfirm();
+        },
+        openInsertConfirm(item){
+            this.targetMail = item;
+            this.$refs.confirmComponent.insertConfirm();
         }
     }
 };

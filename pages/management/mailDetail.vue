@@ -1,7 +1,7 @@
 <template>
-  <CModal :title="modalTitle" :show="showModal" size="xl">
+  <div>
 
-   <template #header>
+   <template>
       <h6 class="modal-title">{{ modalTitle }}</h6>
       <CButtonClose class="text-white" @click="$emit('close')" />
     </template>
@@ -86,7 +86,7 @@
   </CTabs>
 </template>
 
-    <template #footer>
+    <template>
       <CButton size="sm" color="success" @click="confirm">
           <CIcon name="cil-check-circle" />
           <span class="align-middle ml-1">저장</span>
@@ -96,7 +96,7 @@
           <span class="align-middle ml-1">취소</span>
       </CButton>
     </template>
-  </CModal>
+  </div>
 </template>
 
 <script>

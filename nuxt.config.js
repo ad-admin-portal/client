@@ -17,7 +17,7 @@ export default {
     css: [{ src: "~/assets/scss/style.scss", lang: "scss" }],
 
     // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-    plugins: [{ src: "~/plugins/coreui", mode: "client" }, "~/plugins/axios", { src: "~/plugins/persistedState.js" }],
+    plugins: [{ src: "~/plugins/coreui", mode: "client" }, "~/plugins/axios", { src: "~/plugins/persistedState.js" },{ src:"~/plugins/toastify" }],
 
     // Auto import components (https://go.nuxtjs.dev/config-components)
     components: true,
